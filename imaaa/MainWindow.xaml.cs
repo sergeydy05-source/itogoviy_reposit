@@ -5,13 +5,20 @@ using System.Windows.Threading;
 namespace TypingTrainer
 {
     // Цель работы: Вариант 6. Тренажер скорописи.
-    // Версия 1: Базовый функционал (текст, ввод, подсчет скорости).
+    // Версия 2: Добавлены 3 уровня сложности.
     public partial class MainWindow : Window
     {
         private DispatcherTimer timer;
         private DateTime startTime;
         private bool isRunning = false;
-        private string text = "Съешь ещё этих мягких французских булок, да выпей чаю.";
+
+        // Тексты для разных уровней (Новое в Версии 2)
+        private string[] texts = new string[]
+        {
+            "Привет мир.",
+            "Съешь ещё этих мягких французских булок, да выпей чаю.",
+            "В C# используется строгая типизация, сборка мусора и поддержка LINQ запросов."
+        };
 
         public MainWindow()
         {
@@ -24,7 +31,10 @@ namespace TypingTrainer
         {
             if (!isRunning)
             {
-                TextBlock_Task.Text = text;
+                // Выбор текста в зависимости от уровня (Новое в Версии 2)
+                int level = ComboBox_Level.SelectedIndex;
+                TextBlock_Task.Text = texts[level];
+
                 TextBox_Input.Text = "";
                 TextBox_Input.IsEnabled = true;
                 TextBox_Input.Focus();
@@ -32,10 +42,12 @@ namespace TypingTrainer
                 timer.Start();
                 isRunning = true;
                 Button_Start.Content = "Стоп";
+                ComboBox_Level.IsEnabled = false; // Блокируем смену уровня
             }
             else
             {
                 FinishTest();
+                ComboBox_Level.IsEnabled = true; // Разблокируем уровень
             }
         }
 
@@ -48,6 +60,8 @@ namespace TypingTrainer
             TextBlock_Task.Text = "Нажмите Старт";
             TextBlock_Result.Text = "Скорость: 0 зн/мин";
             Button_Start.Content = "Старт";
+            ComboBox_Level.IsEnabled = true;
+            ComboBox_Level.SelectedIndex = 0;
         }
 
         private void FinishTest()
